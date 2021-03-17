@@ -31,16 +31,6 @@ public class ApplicationMainFrame extends JFrame {
         this.setVisible(true);
     }
 
-    private void triggerLogin() {
-        LoginDialog ld = new LoginDialog(this, "Login", true, new LoginListener() {
-            @Override
-            public void onSuccessfulLogin() {
-                categoriesPageRef.updateCategories();
-            }
-        });
-        ld.setVisible(true);
-    }
-
     public void close() {
         this.dispose();
         Runtime.getRuntime().exit(0);

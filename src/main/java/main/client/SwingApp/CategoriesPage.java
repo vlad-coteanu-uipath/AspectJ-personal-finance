@@ -37,20 +37,8 @@ public class CategoriesPage extends JPanel {
                 String categoryName = categoryNameFeld.getText();
                 if(categoryName != null && !categoryName.equals("")) {
                     Category newCat = new Category(0, categoryName, ClientCache.getInstance().getLoggedUser().getId());
-                    Category cat = Client.getInstance().registerNewCategory(newCat);
-                    if(cat == null) {
-                        JOptionPane.showMessageDialog(CategoriesPage.this,
-                                "Something went wrong. Try again!",
-                                "Register category error",
-                                JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(CategoriesPage.this,
-                                "Category created!",
-                                "Category created",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        categoryNameFeld.setText("");
-                        updateCategories();
-                    }
+                    Client.getInstance().registerNewCategory(newCat);
+                    categoryNameFeld.setText("");
                 } else {
                     JOptionPane.showMessageDialog(CategoriesPage.this,
                             "Category can't be empty",
@@ -60,10 +48,9 @@ public class CategoriesPage extends JPanel {
             }
         });
 
-        updateCategories();
     }
 
-    public void updateCategories() {
+    public void syncCategories() {
         if(ClientCache.getInstance().getLoggedUser() != null) {
             categories = Client.getInstance().getAllCategories();
             categoriesList.setListData(categories.toArray());

@@ -24,13 +24,11 @@ public class ExpensesPage extends JPanel {
 
     List<Expense> expenses;
     List<Category> categories;
-    Category selectedCategory;
 
     public ExpensesPage() {
         initComponents();
         this.setSize(700, 550);
         initializeCustomComponents();
-        loadData();
     }
 
     void initializeCustomComponents() {
@@ -46,16 +44,9 @@ public class ExpensesPage extends JPanel {
                     if(expenseName != null && ! expenseName.equals("") && category != null) {
                         int userId = ClientCache.getInstance().getLoggedUser().getId();
                         Expense expense = new Expense(0, expenseName, category.getId(), userId, expenseValue);
-                        expense = Client.getInstance().registerNewExpense(expense);
-                        if(expense != null) {
-                            JOptionPane.showMessageDialog(ExpensesPage.this,
-                                    "Expense created!",
-                                    "Expense created",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                            expenseNameField.setText("");
-                            expenseValueField.setText("");
-                            loadData();
-                        }
+                        Client.getInstance().registerNewExpense(expense);
+                        expenseNameField.setText("");
+                        expenseValueField.setText("");
                     } else {
                         JOptionPane.showMessageDialog(ExpensesPage.this,
                                 "Expense name can't be empty. Expense value must be an integer.",
@@ -75,21 +66,32 @@ public class ExpensesPage extends JPanel {
 
     private void loadData() {
         if(ClientCache.getInstance().getLoggedUser() != null) {
+            syncCategories();
+            syncExpenses();
+        }
+    }
+
+    public void syncExpenses() {
+        expenses = Client.getInstance().getAllExpenses();
+        String[][] expenseData = new String[expenses.size()][4];
+        for(int i = 0; i < expenses.size(); i++) {
+            expenseData[i][0] = expenses.get(i).getName();
+            expenseData[i][1] = String.valueOf(expenses.get(i).getValue());
+            int categoryId = expenses.get(i).getCategoryId();
+            Optional<String> categoryName = categories.stream().filter(p -> p.getId() == categoryId).map(p -> p.getName()).findFirst();
+            expenseData[i][2] = categoryName.orElse("Unkown category");
+
+        }
+        String[] columns = {"DESCRIPTION","VALUE","CATEGORY"};
+        expenseTable.setModel(new CustomTableModel(expenseData, columns));
+
+        this.repaint();
+    }
+
+    public void syncCategories() {
+        if(ClientCache.getInstance().getLoggedUser() != null) {
             categories = Client.getInstance().getAllCategories();
             categoryCombo.setModel(new CategoriesComboboxModel(categories, categoryCombo));
-
-            expenses = Client.getInstance().getAllExpenses();
-            String[][] expenseData = new String[expenses.size()][4];
-            for(int i = 0; i < expenses.size(); i++) {
-                expenseData[i][0] = expenses.get(i).getName();
-                expenseData[i][1] = String.valueOf(expenses.get(i).getValue());
-                int categoryId = expenses.get(i).getCategoryId();
-                Optional<String> categoryName = categories.stream().filter(p -> p.getId() == categoryId).map(p -> p.getName()).findFirst();
-                expenseData[i][2] = categoryName.orElse("Unkown category");
-
-            }
-            String[] columns = {"DESCRIPTION","VALUE","CATEGORY"};
-            expenseTable.setModel(new CustomTableModel(expenseData, columns));
             this.repaint();
         }
     }
