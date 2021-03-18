@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Random;
 
 public class Server {
 
@@ -65,6 +66,13 @@ public class Server {
         }
 
         private Message handleRequest(Message message) {
+
+            double chance = Math.random();
+            if(chance < 0.20) {
+                System.out.println("Server random communication error. Sending null to client. Error chance: " + chance);
+                return null;
+            }
+
             try {
                 switch (message.messageType) {
                     case LOG_USER_REQUEST:

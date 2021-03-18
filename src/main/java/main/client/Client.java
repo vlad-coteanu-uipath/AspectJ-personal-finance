@@ -12,6 +12,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/***
+ * log la conexiune
+ * la send/receive de mesaj
+ *
+ * retry la conexiune in caz ca aceasta pica / serverul e jos
+ *
+ * retry la trimitere de mesaj
+ */
+
 public class Client {
 
     private static final Client INSTANCE = new Client();
@@ -97,16 +106,10 @@ public class Client {
         return null;
     }
 
-    private Message sendMessage(Message message) {
-        try {
-            System.out.println("Sending request: " + message.toString());
-            out.writeObject(message);
-            Message resp = (Message) in.readObject();
-            System.out.println("Received response from server: " + resp.toString());
-            return resp;
-        } catch (Exception e) {
-            return new Message(null, MessageType.ERROR);
-        }
+    private Message sendMessage(Message message) throws IOException, ClassNotFoundException {
+        out.writeObject(message);
+        Message resp = (Message) in.readObject();
+        return resp;
     }
 
     public void stopConnection() throws IOException {
