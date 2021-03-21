@@ -20,6 +20,9 @@ public class ClientApplication {
     public static void main(String[] args) {
         try {
             Client.getInstance().startConnection(DEFAULT_CLIENT_IP, DEFAULT_CLIENT_SOCKET);
+            if (!ClientCache.getInstance().isServerConnected()) {
+                return;
+            }
             LoginListener loginListener = new LoginListener() {
                 @Override
                 public void onSuccessfulLogin() {

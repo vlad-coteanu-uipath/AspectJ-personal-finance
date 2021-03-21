@@ -8,18 +8,9 @@ import main.common.messaging.MessageType;
 
 import java.io.*;
 import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-/***
- * log la conexiune
- * la send/receive de mesaj
- *
- * retry la conexiune in caz ca aceasta pica / serverul e jos
- *
- * retry la trimitere de mesaj
- */
 
 public class Client {
 
@@ -113,7 +104,6 @@ public class Client {
     }
 
     public void stopConnection() throws IOException {
-        System.out.println("Stopped client connection");
         in.close();
         out.close();
         clientSocket.close();
