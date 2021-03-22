@@ -54,10 +54,10 @@ public aspect ConnectionAspect {
   }
 
   private void writeInfoMessage(String message) {
-    System.out.println(colorize(message, Attribute.BRIGHT_GREEN_TEXT()));
+    System.out.println(colorize(message, Attribute.BLUE_TEXT()));
   }
 
   private void writeErrorMessage(String message) {
-    System.out.println(colorize(message, Attribute.BRIGHT_RED_TEXT()));
+    System.out.println(colorize(message, Attribute.BLACK_TEXT()));
   }
 }

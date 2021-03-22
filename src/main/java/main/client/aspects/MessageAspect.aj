@@ -51,7 +51,7 @@ public aspect MessageAspect {
   }
 
   private void writeInfoMessage(String message) {
-    System.out.println(colorize(message, Attribute.GREEN_TEXT()));
+    System.out.println(colorize(message, Attribute.BRIGHT_CYAN_TEXT()));
   }
 
   private void writeErrorMessage(String message) {
