@@ -1,8 +1,9 @@
-package main.server;
+package main.server.repository;
 
 import main.common.entities.Category;
 import main.common.entities.Expense;
 import main.common.entities.User;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,23 +13,31 @@ import java.util.stream.Collectors;
 /*
 * Serialize and deserialize as List<Object>
 * */
-public class BinFileDatabaseRepositoryImpl implements DatabaseRepository {
 
-    private static BinFileDatabaseRepositoryImpl INSTANCE;
+@Repository
+public class BinFileDatabaseRepositoryImpl implements DatabaseRepository {
 
     public static final String USERS_FILE_NAME = "users_file_db";
     public static final String CATEGORIES_FILE_NAME = "categories_file_db";
     public static final String EXPENSES_FILE_NAME = "expenses_file_db";
 
-    private BinFileDatabaseRepositoryImpl() {
-
-    }
-
-    public static BinFileDatabaseRepositoryImpl getInstance () {
-        if(INSTANCE == null) {
-            INSTANCE = new BinFileDatabaseRepositoryImpl();
+    public boolean isDBReady() {
+        File usersFile = new File(USERS_FILE_NAME);
+        if(!usersFile.exists()) {
+            return false;
         }
-        return INSTANCE;
+
+        File categoriesFile = new File(CATEGORIES_FILE_NAME);
+        if(!categoriesFile.exists()) {
+            return false;
+        }
+
+        File expensesFile = new File(EXPENSES_FILE_NAME);
+        if(!expensesFile.exists()) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

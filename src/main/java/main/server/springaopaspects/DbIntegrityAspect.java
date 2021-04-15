@@ -1,9 +1,13 @@
-package main.server.aspects;
+package main.server.springaopaspects;
 
 import com.diogonunes.jcolor.Attribute;
 import main.common.entities.Category;
 import main.common.entities.Expense;
 import main.common.entities.User;
+import main.common.messaging.Message;
+import main.server.ServerClientHandler;
+import org.aspectj.lang.annotation.*;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,21 +19,25 @@ import java.util.List;
 import static com.diogonunes.jcolor.Ansi.colorize;
 import static main.server.repository.BinFileDatabaseRepositoryImpl.*;
 
-public aspect DbIntegrityAspect {
+@Aspect
+@Component
+public class DbIntegrityAspect {
 
-    pointcut createDbInstance() : call(BinFileDatabaseRepositoryImpl.new(..));
+    @Pointcut("execution(* main.server.repository.BinFileDatabaseRepositoryImpl.isDBReady(..))")
+    private void isDatabaseReadyPointcut() {}
 
-    after() returning : createDbInstance() {
+    @Before("isDatabaseReadyPointcut()")
+    public void createDbInstance() {
 
         System.out.println(colorize("Checking database integrity", Attribute.BLUE_TEXT()));
 
         File usersFile = new File(USERS_FILE_NAME);
         if(!usersFile.exists()) {
-                System.out.println(colorize("   Creating users file", Attribute.BLUE_TEXT()));
-                try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(usersFile))) {
-                    User u1 = new User(0, "vlad.coteanu", "parola");
-                    User u2 = new User(1, "sebastian.coteanu", "parola");
-                    List<User> userList = new ArrayList<User>();
+            System.out.println(colorize("   Creating users file", Attribute.BLUE_TEXT()));
+            try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(usersFile))) {
+                User u1 = new User(0, "vlad.coteanu", "parola");
+                User u2 = new User(1, "sebastian.coteanu", "parola");
+                List<User> userList = new ArrayList<User>();
                 userList.add(u1);
                 userList.add(u2);
                 ois.writeObject(userList);

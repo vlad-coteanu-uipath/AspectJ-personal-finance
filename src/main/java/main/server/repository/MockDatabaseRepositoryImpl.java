@@ -1,17 +1,18 @@
-package main.server;
+package main.server.repository;
 
 
 import main.common.entities.Category;
 import main.common.entities.Expense;
 import main.common.entities.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class MockDatabaseRepositoryImpl implements DatabaseRepository {
 
-    private static final MockDatabaseRepositoryImpl INSTANCE = new MockDatabaseRepositoryImpl();
     private List<Category> categoryList;
     private List<Expense> expensesList;
     private List<User> usersList;
@@ -37,6 +38,11 @@ public class MockDatabaseRepositoryImpl implements DatabaseRepository {
         expensesList.add(new Expense(2, "Fanta", 2, 1, 6));
         expensesList.add(new Expense(3, "Denim Jeans", 3, 1, 250));
         expensesList.add(new Expense(4, "Chicken Wings", 1, 1, 24));
+    }
+
+    @Override
+    public boolean isDBReady() {
+        return true;
     }
 
     public Category registerCategory(Category category) {
