@@ -7,19 +7,28 @@ package main.client.SwingApp;
 import main.client.Client;
 import main.client.ClientCache;
 import main.common.entities.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import javax.swing.*;
 
 /**
  * @author unknown
  */
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LoginDialog extends JDialog {
+
+    @Autowired
+    private Client client;
 
     private LoginListener loginListener;
 
@@ -48,7 +57,7 @@ public class LoginDialog extends JDialog {
                 if(result == JOptionPane.YES_OPTION) {
                     we.getWindow().dispose();
                     try {
-                        Client.getInstance().stopConnection();
+                        client.stopConnection();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -63,7 +72,7 @@ public class LoginDialog extends JDialog {
                 String username = userNameField.getText();
                 String password = new String(passwordField.getPassword());
                 if(username != null) {
-                    User respUser = Client.getInstance().loginUser(new User(-1, username, password));
+                    User respUser = client.loginUser(new User(-1, username, password));
                     if(respUser != null) {
                         ClientCache.getInstance().storeUser(respUser);
                         LoginDialog.this.loginListener.onSuccessfulLogin();

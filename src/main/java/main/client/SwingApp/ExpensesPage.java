@@ -8,6 +8,8 @@ import main.client.Client;
 import main.client.ClientCache;
 import main.common.entities.Category;
 import main.common.entities.Expense;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,7 +22,11 @@ import java.util.Optional;
 /**
  * @author unknown
  */
+@Component
 public class ExpensesPage extends JPanel {
+
+    @Autowired
+    private Client client;
 
     List<Expense> expenses;
     List<Category> categories;
@@ -44,7 +50,7 @@ public class ExpensesPage extends JPanel {
                     if(expenseName != null && ! expenseName.equals("") && category != null) {
                         int userId = ClientCache.getInstance().getLoggedUser().getId();
                         Expense expense = new Expense(0, expenseName, category.getId(), userId, expenseValue);
-                        Client.getInstance().registerNewExpense(expense);
+                        client.registerNewExpense(expense);
                         expenseNameField.setText("");
                         expenseValueField.setText("");
                     } else {
@@ -72,7 +78,7 @@ public class ExpensesPage extends JPanel {
     }
 
     public void syncExpenses() {
-        expenses = Client.getInstance().getAllExpenses();
+        expenses = client.getAllExpenses();
         String[][] expenseData = new String[expenses.size()][4];
         for(int i = 0; i < expenses.size(); i++) {
             expenseData[i][0] = expenses.get(i).getName();
@@ -90,7 +96,7 @@ public class ExpensesPage extends JPanel {
 
     public void syncCategories() {
         if(ClientCache.getInstance().getLoggedUser() != null) {
-            categories = Client.getInstance().getAllCategories();
+            categories = client.getAllCategories();
             categoryCombo.setModel(new CategoriesComboboxModel(categories, categoryCombo));
             this.repaint();
         }

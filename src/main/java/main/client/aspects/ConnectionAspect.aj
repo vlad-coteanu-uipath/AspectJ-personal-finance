@@ -13,7 +13,7 @@ public aspect ConnectionAspect {
   final int MAX_SEND_MESSAGE_RETRIES = 3;
 
   pointcut startConnection(String ip, int port) :
-    call(* Client.startConnection(String, int) throws IOException) && args(ip, port);
+          call(* Client.startConnection(String, int) throws IOException) && args(ip, port);
 
   pointcut stopConnection() :
     call(* Client.stopConnection() throws IOException);

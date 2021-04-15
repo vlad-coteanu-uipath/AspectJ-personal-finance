@@ -4,13 +4,15 @@ import main.common.entities.Category;
 import main.common.entities.Expense;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 
+@Component
 @Aspect
 public class DialogueAspect {
 
-    @AfterReturning(pointcut = "execution (* Client.registerNewCategory(..))", returning="cat")
+    @AfterReturning(pointcut = "execution (* *..*.Client.registerNewCategory(..))", returning="cat")
     public void registerCategory(Category cat) {
         if(cat == null) {
             JOptionPane.showMessageDialog(null,
@@ -25,7 +27,7 @@ public class DialogueAspect {
         }
     }
 
-    @AfterReturning(pointcut = "execution (* Client.registerNewExpense(..))", returning="expense")
+    @AfterReturning(pointcut = "execution (* *..*.Client.registerNewExpense(..))", returning="expense")
     public void registerExpense(Expense expense) {
         if(expense == null) {
             JOptionPane.showMessageDialog(null,

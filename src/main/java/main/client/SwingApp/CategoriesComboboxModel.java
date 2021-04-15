@@ -4,6 +4,7 @@ import main.common.entities.Category;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriesComboboxModel implements ComboBoxModel {
@@ -37,6 +38,9 @@ public class CategoriesComboboxModel implements ComboBoxModel {
 
     @Override
     public int getSize() {
+        if(categories == null) {
+            return 0;
+        }
         return categories.size();
     }
 

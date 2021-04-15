@@ -4,7 +4,9 @@
 
 package main.client.SwingApp;
 
-import main.client.ClientCache;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,19 +14,27 @@ import java.awt.*;
 /**
  * @author unknown
  */
+
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ApplicationMainFrame extends JFrame {
 
     private CategoriesPage categoriesPageRef;
+
     private ExpensesPage expensesPageRef;
 
-    public ApplicationMainFrame() {
+    public ApplicationMainFrame(CategoriesPage categoriesPage, ExpensesPage expensesPage) {
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(750, 600));
         initComponents();
 
-        categoriesPageRef = new CategoriesPage();
-        expensesPageRef = new ExpensesPage();
+        categoriesPageRef = categoriesPage;
+        categoriesPage.syncCategories();
+
+        expensesPageRef = expensesPage;
+        expensesPage.syncCategories();
+        expensesPage.syncExpenses();
 
         mainTabbedPane.addTab("Expenses", expensesPageRef);
         mainTabbedPane.addTab("Categories", categoriesPageRef);

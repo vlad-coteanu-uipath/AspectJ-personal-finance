@@ -7,6 +7,8 @@ package main.client.SwingApp;
 import main.client.Client;
 import main.client.ClientCache;
 import main.common.entities.Category;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,7 +20,12 @@ import javax.swing.*;
 /**
  * @author unknown
  */
+
+@Component
 public class CategoriesPage extends JPanel {
+
+    @Autowired
+    private Client client;
 
     private List<Category> categories = new ArrayList();
 
@@ -37,7 +44,7 @@ public class CategoriesPage extends JPanel {
                 String categoryName = categoryNameFeld.getText();
                 if(categoryName != null && !categoryName.equals("")) {
                     Category newCat = new Category(0, categoryName, ClientCache.getInstance().getLoggedUser().getId());
-                    Client.getInstance().registerNewCategory(newCat);
+                    client.registerNewCategory(newCat);
                     categoryNameFeld.setText("");
                 } else {
                     JOptionPane.showMessageDialog(CategoriesPage.this,
@@ -52,7 +59,7 @@ public class CategoriesPage extends JPanel {
 
     public void syncCategories() {
         if(ClientCache.getInstance().getLoggedUser() != null) {
-            categories = Client.getInstance().getAllCategories();
+            categories = client.getAllCategories();
             categoriesList.setListData(categories.toArray());
             this.repaint();
         }

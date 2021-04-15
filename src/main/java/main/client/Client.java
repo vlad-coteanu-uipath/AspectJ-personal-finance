@@ -5,6 +5,8 @@ import main.common.entities.Expense;
 import main.common.entities.User;
 import main.common.messaging.Message;
 import main.common.messaging.MessageType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,19 +14,17 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class Client {
 
-    private static final Client INSTANCE = new Client();
+    @Autowired
+    private RequestSender requestSender;
 
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    private Client() {}
-
-    public static Client getInstance() {
-        return INSTANCE;
-    }
+    public Client() {}
 
     public void startConnection(String ip, int port) throws IOException {
         clientSocket = new Socket(ip, port);
@@ -34,7 +34,10 @@ public class Client {
 
     public List<Expense> getAllExpenses() {
         try {
-            Message resp = sendMessage(new Message(MessageType.GET_EXPENSES_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
+            Message resp = requestSender.sendMessage(
+                    out,
+                    in,
+                    new Message(MessageType.GET_EXPENSES_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
 
             if(resp.payload != null) {
                 return (List<Expense>) resp.payload;
@@ -47,7 +50,10 @@ public class Client {
 
     public List<Category> getAllCategories() {
         try {
-            Message resp = sendMessage(new Message(MessageType.GET_CATEGORIES_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
+            Message resp = requestSender.sendMessage(
+                    out,
+                    in,
+                    new Message(MessageType.GET_CATEGORIES_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
 
             if(resp.payload != null) {
                 return (List<Category>) resp.payload;
@@ -60,7 +66,10 @@ public class Client {
 
     public Category registerNewCategory(Category category) {
         try {
-            Message resp = sendMessage(new Message(category, MessageType.REGISTER_CATEGORY_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
+            Message resp = requestSender.sendMessage(
+                    out,
+                    in,
+                    new Message(category, MessageType.REGISTER_CATEGORY_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
 
             if(resp.payload != null) {
                 return (Category) resp.payload;
@@ -73,7 +82,10 @@ public class Client {
 
     public Expense registerNewExpense(Expense category) {
         try {
-            Message resp = sendMessage(new Message(category, MessageType.REGISTER_EXPENSE_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
+            Message resp = requestSender.sendMessage(
+                    out,
+                    in,
+                    new Message(category, MessageType.REGISTER_EXPENSE_REQUEST, ClientCache.getInstance().getLoggedUser().getId()));
 
             if(resp.payload != null) {
                 return (Expense) resp.payload;
@@ -86,7 +98,10 @@ public class Client {
 
     public User loginUser(User user) {
         try {
-            Message resp = sendMessage(new Message(user, MessageType.LOG_USER_REQUEST));
+            Message resp = requestSender.sendMessage(
+                    out,
+                    in,
+                    new Message(user, MessageType.LOG_USER_REQUEST));
 
             if(resp.payload != null) {
                 return (User) resp.payload;
@@ -95,12 +110,6 @@ public class Client {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private Message sendMessage(Message message) throws IOException, ClassNotFoundException {
-        out.writeObject(message);
-        Message resp = (Message) in.readObject();
-        return resp;
     }
 
     public void stopConnection() throws IOException {

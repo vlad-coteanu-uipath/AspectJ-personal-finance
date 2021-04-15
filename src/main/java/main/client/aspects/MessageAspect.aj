@@ -10,6 +10,7 @@ import java.io.IOException;
 import static com.diogonunes.jcolor.Ansi.colorize;
 
 public aspect MessageAspect {
+
   final int MAX_SEND_MESSAGE_RETRIES = 3;
   pointcut sendMessage(Message request) :
     call(* Client.sendMessage(Message) throws IOException, ClassNotFoundException) && args(request);
